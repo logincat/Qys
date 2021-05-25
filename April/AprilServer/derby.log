@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Mon Mar 09 13:31:32 CST 2020:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.10.1.1 - (1458268): instance a816c00e-0170-bdc6-dec6-00000db3fc40 
+on database directory D:\ideaProject\April\AprilServer\EmbeddedDB with class loader sun.misc.Launcher$AppClassLoader@18b4aac2 
+Loaded from file:/C:/Users/logincat/.m2/repository/org/apache/derby/derby/10.10.1.1/derby-10.10.1.1.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0_231-b11
+user.dir=D:\ideaProject\April\AprilServer
+os.name=Windows 10
+os.arch=amd64
+os.version=10.0
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''

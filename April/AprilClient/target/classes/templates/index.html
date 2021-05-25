@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Client</title>
+    <link rel="stylesheet" href="../static/css/live2d.css" />
+    <link rel="stylesheet"
+          href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="../static/css/fileinput.min.css"/>
+    <script src="../static/js/fileinput.min.js"></script>
+    <script src="../static/js/zh.js"></script>
+    <style type="text/css">
+        .btn-file{
+            display: none;
+        }
+        button{
+            display: none;
+        }
+        table{
+            table-layout: fixed;
+            width:100%;
+        }
+        td{
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <div style="text-align: center;width: 651px;margin-top: 20px;margin-left: 20px;">
+        <div class="file-loading">
+
+            <input id="file_upload" type="file" />
+        </div>
+        <br/>
+        <input type="button" value="上传文件" id="upload" class="btn btn-sm btn-primary"/>
+        <br/>
+        <script>
+            $(document).ready(function() {
+                $("#file_upload").fileinput({
+                    browseLabel: 'Select Folder...'
+                });
+            });
+        </script>
+        <!-- 对文件元数据进行显示 -->
+        <div style="text-align: center;">
+            <table class="table table-striped" id="mytable">
+                <thead>
+                <tr>
+
+                    <th>UUID</th>
+                    <th>名称</th>
+                    <th>大小</th>
+                    <th>类型</th>
+                    <th>创建时间</th>
+                    <th>保存地址</th>
+                    <th>加密信封</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td id="uuid"></td>
+                    <td id="name"></td>
+                    <td id="size"></td>
+                    <td id="type"></td>
+                    <td id="time"></td>
+                    <td id="path"></td>
+                    <td id="encrpyt"></td>
+                    <td>
+                        <a href="#" class="btn btn-sm btn-danger" id="show">显示</a>
+                        <a href="#" class="btn btn-sm btn-danger"
+                           id="download">下载</a>
+                    </td>
+                </tr>
+
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="waifu">
+        <div class="waifu-tips"></div>
+        <canvas id="live2d" width="280" height="570" class="live2d"></canvas>
+    </div>
+    <canvas class="fireworks" style="position: fixed; left: 0px; top: 0px; z-index: 2147483647;
+    pointer-events: none; width: 1366px; height: 150px;" width="2732" height="300"></canvas>
+<script type="text/javascript" src="../static/js/shubiaotexiao.js"/>
+<script type="text/javascript" src="../static/js/live2d.js"/>
+<script type="text/javascript" src="../static/js/waifu-tips.js"/>
+<script type="text/javascript">
+    loadlive2d("live2d", "../static/model/model.json");
+</script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+        $(function() {
+            function ajaxFileUpload(){
+                // var X_SID = [[${X_SID}]];
+                // var X_Signature = [[${X_Signature}]];
+                // debugger
+                var formData = new FormData();
+                formData.append('file',$("#file_upload")[0].files[0]);
+                // formData.append('X_SID',X_SID);
+                // formData.append('X_Signature',X_Signature);
+
+                $.ajax({
+                    type:"post",
+                    url:"http://127.0.0.1:8080/upload",
+                    async:false,
+                    contentType: false, // 不要设置Content-Type请求头
+                    processData: false, // 使数据不做处理
+                    data:formData,
+                    dataType:'text',    //返回类型，有json，text，HTML。这里并没有jsonp格式
+                    success:function(data){
+                        $("#uuid")[0].innerHTML = data;
+                    },
+                    error:function(XMLHttpRequest, textStatus, errorThrown, data){
+                        // console.log(errorThrown);
+                    }
+                });
+            }
+
+            function show(){
+                var uuid = $("#uuid").html();
+                // alert(uuid);
+                var formData = new FormData();
+                formData.append("uuid",uuid);
+                $.ajax({
+                    type:"post",
+                    url:"http://127.0.0.1:8080/show",
+                    async:false,
+                    contentType: false, // 不要设置Content-Type请求头
+                    processData: false, // 使数据不做处理
+                    data:formData,
+                    dataType:'text',   //返回类型，有json，text，HTML。这里并没有jsonp格式
+                    success:function(data){
+                        var info = JSON.parse(data);
+                        $("#name")[0].innerHTML = info[0].name;
+                        $("#size")[0].innerHTML = info[0].size;
+                        $("#type")[0].innerHTML = info[0].type;
+                        $("#time")[0].innerHTML = info[0].createtime;
+                        $("#path")[0].innerHTML = info[0].savefileaddr;
+                        $("#encrpyt")[0].innerHTML = info[0].fileencrypt
+                    },
+
+                });
+            }
+            $("#upload").click(function(){
+                ajaxFileUpload();
+            });
+
+            $("#show").click(function(){
+                show();
+            });
+
+            $("#download").click(function(){
+                var uuid = $("#uuid").html();
+                window.location.href="http://127.0.0.1:8080/download?uuid="+uuid;
+            });
+
+        });
+    /*]]>*/
+    </script>
+
+</body>
+</html>
